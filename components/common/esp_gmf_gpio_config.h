@@ -27,8 +27,8 @@ extern "C" {
 #define ESP_GMF_SD_WIDTH      (1)
 
 // I2C
-#define ESP_GMF_I2C_SDA_IO_NUM (GPIO_NUM_17)
-#define ESP_GMF_I2C_SCL_IO_NUM (GPIO_NUM_18)
+#define ESP_GMF_I2C_SDA_IO_NUM (GPIO_NUM_15)
+#define ESP_GMF_I2C_SCL_IO_NUM (GPIO_NUM_14)
 
 // I2S
 #define ESP_GMF_I2S_DAC_MCLK_IO_NUM (GPIO_NUM_16)
@@ -43,9 +43,9 @@ extern "C" {
 #define ESP_GMF_I2S_ADC_DO_IO_NUM   (GPIO_NUM_8)
 #define ESP_GMF_I2S_ADC_DI_IO_NUM   (GPIO_NUM_10)
 // PA
-#define ESP_GMF_AMP_IO_NUM          (GPIO_NUM_48)
+#define ESP_GMF_AMP_IO_NUM          (GPIO_NUM_46)
 
-#define CODEC_ES7210_IN_ES8311_OUT (1)
+#define CODEC_ES8311_IN_OUT (1)
 
 #elif CONFIG_ESP32_S3_BOX_3_BOARD
 // Sdmmc
