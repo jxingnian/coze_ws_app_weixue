@@ -33,7 +33,7 @@
 
 #define VAD_ENABLE       (true)
 #define VCMD_ENABLE      (false)
-#define DEFAULT_FIFO_NUM (5)
+#define DEFAULT_FIFO_NUM (15)
 
 #if CONFIG_KEY_PRESS_DIALOG_MODE
 #define CAHNNELS    1
