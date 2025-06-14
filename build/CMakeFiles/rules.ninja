@@ -2106,7 +2106,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_common_
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\Espressif5.3\tools\cmake\3.24.0\bin\cmake.exe --regenerate-during-build -SC:\esp-adf\examples\ai_agent\coze_ws_app -BC:\esp-adf\examples\ai_agent\coze_ws_app\build
+  command = C:\Espressif5.3\tools\cmake\3.24.0\bin\cmake.exe --regenerate-during-build -SC:\Users\Administrator\Desktop\XingNian\esp32_project\chunfeng\coze_ws_app -BC:\Users\Administrator\Desktop\XingNian\esp32_project\chunfeng\coze_ws_app\build
   description = Re-running CMake...
   generator = 1
 

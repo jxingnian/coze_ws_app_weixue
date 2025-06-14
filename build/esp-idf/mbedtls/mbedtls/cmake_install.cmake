@@ -39,10 +39,10 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/esp-adf/examples/ai_agent/coze_ws_app/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
-  include("C:/esp-adf/examples/ai_agent/coze_ws_app/build/esp-idf/mbedtls/mbedtls/3rdparty/cmake_install.cmake")
-  include("C:/esp-adf/examples/ai_agent/coze_ws_app/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
-  include("C:/esp-adf/examples/ai_agent/coze_ws_app/build/esp-idf/mbedtls/mbedtls/pkgconfig/cmake_install.cmake")
+  include("C:/Users/Administrator/Desktop/XingNian/esp32_project/chunfeng/coze_ws_app/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
+  include("C:/Users/Administrator/Desktop/XingNian/esp32_project/chunfeng/coze_ws_app/build/esp-idf/mbedtls/mbedtls/3rdparty/cmake_install.cmake")
+  include("C:/Users/Administrator/Desktop/XingNian/esp32_project/chunfeng/coze_ws_app/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
+  include("C:/Users/Administrator/Desktop/XingNian/esp32_project/chunfeng/coze_ws_app/build/esp-idf/mbedtls/mbedtls/pkgconfig/cmake_install.cmake")
 
 endif()
 

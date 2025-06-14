@@ -1,4 +1,4 @@
-# Install script for directory: C:/esp-adf/examples/ai_agent/coze_ws_app/managed_components/espressif__gmf_misc
+# Install script for directory: C:/Users/Administrator/Desktop/XingNian/esp32_project/chunfeng/coze_ws_app/managed_components/espressif__gmf_misc
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
