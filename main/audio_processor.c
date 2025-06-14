@@ -113,7 +113,6 @@ esp_err_t audio_manager_init(void)
         .bits_per_sample = SAMPLE_BITS,
         .port_num = 0,
     };
-
     esp_gmf_setup_periph_codec(&play_info, &record_info, &audio_manager.play_dev, &audio_manager.rec_dev);
     esp_gmf_pool_init(&audio_manager.pool);
     pool_register_io(audio_manager.pool);
@@ -441,6 +440,8 @@ esp_err_t audio_playback_open(void)
         player_cfg.task_prio = 5;
         player_cfg.task_stack = 12 * 1024;
         player_cfg.task_core = 1;
+        player_cfg.prev = NULL;
+        player_cfg.prev_ctx = NULL;
 
         err = esp_audio_simple_player_new(&player_cfg, &audio_playback.player);
         if (err != ESP_GMF_ERR_OK) {
