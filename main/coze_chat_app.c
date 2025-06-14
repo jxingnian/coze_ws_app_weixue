@@ -22,6 +22,7 @@
 
 #include "iot_button.h"
 #include "button_adc.h"
+#include "button_gpio.h"
 #include "esp_coze_chat.h"
 #include "audio_processor.h"
 
@@ -195,14 +196,13 @@ esp_err_t coze_chat_app_init(void)
     /** ESP32-S3-Korvo2 board */
     button_handle_t btn = NULL;
     const button_config_t btn_cfg = {0};
-    button_adc_config_t btn_adc_cfg = {
-        .unit_id = ADC_UNIT_1,
-        .adc_channel = 4,
-        .button_index = 0,
-        .min = 2310,
-        .max = 2510
+    button_gpio_config_t btn_gpio_cfg = {
+        .gpio_num = 0,        // BOOT键通常为GPIO0
+        .active_level = 0,    // 低电平按下
+        .enable_power_save = false,
+        .disable_pull = false
     };
-    iot_button_new_adc_device(&btn_cfg, &btn_adc_cfg, &btn);
+    iot_button_new_gpio_device(&btn_cfg, &btn_gpio_cfg, &btn);
     ESP_ERROR_CHECK(iot_button_register_cb(btn, BUTTON_PRESS_DOWN, NULL, button_event_cb, NULL));
     ESP_ERROR_CHECK(iot_button_register_cb(btn, BUTTON_PRESS_UP, NULL, button_event_cb, NULL));
     coze_chat.data_evt_group = xEventGroupCreate();
