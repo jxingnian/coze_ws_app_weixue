@@ -1,0 +1,8 @@
+source "C:/Espressif5.3/frameworks/esp-idf-v5.3/components/bootloader/Kconfig.projbuild"
+source "C:/Espressif5.3/frameworks/esp-idf-v5.3/components/esp_app_format/Kconfig.projbuild"
+source "C:/Espressif5.3/frameworks/esp-idf-v5.3/components/esp_rom/Kconfig.projbuild"
+source "C:/Espressif5.3/frameworks/esp-idf-v5.3/components/esptool_py/Kconfig.projbuild"
+source "C:/Espressif5.3/frameworks/esp-idf-v5.3/components/partition_table/Kconfig.projbuild"
+source "C:/esp-adf/examples/ai_agent/coze_ws_app/main/Kconfig.projbuild"
+source "C:/Espressif5.3/frameworks/esp-idf-v5.3/examples/common_components/protocol_examples_common/Kconfig.projbuild"
+source "C:/esp-adf/examples/ai_agent/coze_ws_app/managed_components/espressif__esp-sr/Kconfig.projbuild"
