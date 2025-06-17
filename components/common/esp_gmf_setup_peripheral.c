@@ -12,7 +12,6 @@
 #include "nvs_flash.h"
 #include "esp_gmf_oal_mem.h"
 #include "driver/i2c_master.h"
-#include "driver/i2c.h"
 #include "esp_gmf_gpio_config.h"
 #include "esp_gmf_setup_peripheral.h"
 #include "sd_pwr_ctrl_by_on_chip_ldo.h"
