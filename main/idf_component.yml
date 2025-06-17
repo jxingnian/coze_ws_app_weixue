@@ -29,3 +29,16 @@ dependencies:
         version: "~0.4"
       - if: "idf_version >5.4.0 && target in [esp32p4]"
         version: "~0.6"
+  espressif/esp_io_expander_tca9554: ^2.0.1
+  idf: '>5.0.4,!=5.1.1'
+
+
+  esp_lcd_sh8601:
+    path: ../components/esp_lcd_sh8601
+    version: '*'
+    public: true
+
+  lvgl/lvgl:
+    version: 8.3.*
+    public: true
+  espressif/esp_lcd_touch_ft5x06: ^1.0.7
