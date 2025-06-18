@@ -12,7 +12,7 @@
 #include "esp_gmf_element.h"
 #include "esp_gmf_pipeline.h"
 #include "esp_gmf_pool.h"
-#include "esp_gmf_oal_mem.h"
+#include "esp_heap_caps.h"  // 直接包含ESP堆管理头文件
 
 #include "esp_gmf_io_file.h"
 #include "esp_gmf_io_http.h"
@@ -50,6 +50,28 @@
 #include "driver/i2c_master.h"
 
 static const char *TAG = "ESP_GMF_SETUP_POOL";
+
+// 自定义内存分配函数，优先使用PSRAM
+static void* gmf_malloc_psram(size_t size)
+{
+    ESP_LOGI(TAG, "Allocating %d bytes, trying PSRAM first", size);
+    void* ptr = heap_caps_malloc(size, MALLOC_CAP_8BIT | MALLOC_CAP_SPIRAM);
+    if (ptr == NULL) {
+        ESP_LOGE(TAG, "Failed to allocate %d bytes from PSRAM, trying internal memory", size);
+        ptr = heap_caps_malloc(size, MALLOC_CAP_8BIT | MALLOC_CAP_INTERNAL);
+        if (ptr != NULL) {
+            ESP_LOGW(TAG, "Allocated %d bytes from internal memory", size);
+        } else {
+            ESP_LOGE(TAG, "Failed to allocate %d bytes from any memory!", size);
+        }
+    } else {
+        ESP_LOGI(TAG, "Successfully allocated %d bytes from PSRAM", size);
+    }
+    return ptr;
+}
+
+// 替换所有内存分配函数
+#define esp_gmf_oal_mem_malloc(size) gmf_malloc_psram(size)
 
 #define SETUP_AUDIO_SAMPLE_RATE 16000
 #define SETUP_AUDIO_BITS        16

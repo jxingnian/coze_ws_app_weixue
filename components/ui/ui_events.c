@@ -1,14 +1,16 @@
 /*
  * @Author: jixingnian@gmail.com
  * @Date: 2025-06-12 15:42:08
- * @LastEditTime: 2025-06-13 13:09:49
+ * @LastEditTime: 2025-06-18 12:19:35
  * @LastEditors: 星年
  * @Description: 
- * @FilePath: \05_LVGL_WITH_RAM\components\ui\ui_events.c
+ * @FilePath: \coze_ws_app_weixue\components\ui\ui_events.c
  * 遇事不决，可问春风
  */
 #include "ui.h"
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 static const char *TAG = "ui_events";
 
@@ -40,6 +42,7 @@ static const char *TAG = "ui_events";
 lv_obj_t * ui_chat;
 
 int chat_count = 0;
+
 void new_chat(lv_obj_t *ui_chat, char *text){
     ui_chat = lv_textarea_create(ui_Panel1);
     lv_obj_set_width(ui_chat, CHAT_WIDTH);
@@ -53,30 +56,34 @@ void new_chat(lv_obj_t *ui_chat, char *text){
     lv_textarea_set_one_line(ui_chat, true);
 }
 
+// 显示文字
+void show_text(char *text){
+    new_chat(ui_chat, text);
+}
+
+// 定时任务：每隔2秒显示一行新文字
+static void chat_task(void *pvParameters)
+{
+    int i = 0;
+    char buf[64];
+    while (1) {
+        snprintf(buf, sizeof(buf), "定时消息 %d", ++i);
+        // LVGL 线程安全处理（如有必要可加锁）
+        show_text(buf);
+        vTaskDelay(pdMS_TO_TICKS(2000));
+    }
+}
+
 void ui_events_init(void){
 
-lv_label_set_text(ui_Time, "13:14");
+    lv_label_set_text(ui_Time, "13:14");
 
-lv_label_set_text(ui_status, STATUS_WAIT);
-lv_label_set_text(ui_network, NETWORK_WIFI);
-lv_label_set_text(ui_battery, BATTERY_LOW);
+    lv_label_set_text(ui_status, STATUS_WAIT);
+    lv_label_set_text(ui_network, NETWORK_WIFI);
+    lv_label_set_text(ui_battery, BATTERY_LOW);
 
-new_chat(ui_chat, "你好,我是小星1");
-new_chat(ui_chat, "你好,我是小星2");
-new_chat(ui_chat, "你好,我是小星3");
-new_chat(ui_chat, "你好,我是小星1");
-new_chat(ui_chat, "你好,我是小星2");
-new_chat(ui_chat, "你好,我是小星3");
-new_chat(ui_chat, "你好,我是小星1");
-new_chat(ui_chat, "你好,我是小星2");
-new_chat(ui_chat, "你好,我是小星3");
-new_chat(ui_chat, "你好,我是小星1");
-new_chat(ui_chat, "你好,我是小星2");
-new_chat(ui_chat, "你好,我是小星3");
-new_chat(ui_chat, "你好,我是小星1");
-new_chat(ui_chat, "你好,我是小星2");
-new_chat(ui_chat, "你好,我是小星3");
-new_chat(ui_chat, "你好,我是小星1");
-new_chat(ui_chat, "你好,我是小星2");
-new_chat(ui_chat, "你好,我是小星3");
+    new_chat(ui_chat, "你好,我是小星");
+
+    // 启动定时任务，每2秒增加一行文字
+    xTaskCreate(chat_task, "chat_task", 2048, NULL, 5, NULL);
 }

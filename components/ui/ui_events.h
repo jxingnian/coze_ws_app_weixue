@@ -7,6 +7,7 @@
 #define _UI_EVENTS_H
 
 void ui_events_init(void);
+void show_text(char *text);
 
 #ifdef __cplusplus
 extern "C" {

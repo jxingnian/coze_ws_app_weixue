@@ -2,7 +2,7 @@
  * @Author: xingnian j_xingnian@163.com
  * @Date: 2025-06-14 19:45:31
  * @LastEditors: 星年
- * @LastEditTime: 2025-06-18 11:52:27
+ * @LastEditTime: 2025-06-18 14:20:51
  * @FilePath: \coze_ws_app_weixue\main\main.c
  * @Description: 
  * 
@@ -398,7 +398,8 @@ void app_main(void)
     esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_0, 1);
     esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_1, 1);
     esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_2, 1);
-i2c_handle0 = i2c_bus_handle;
+    i2c_handle0 = i2c_bus_handle;
+
 #if EXAMPLE_PIN_NUM_BK_LIGHT >= 0
     ESP_LOGI(TAG, "Turn off LCD backlight");
     gpio_config_t bk_gpio_config = {
@@ -549,6 +550,7 @@ i2c_handle0 = i2c_bus_handle;
     {
         ui_init();  // 初始化用户界面
 
+        ui_events_init();
         // lv_demo_widgets(); /* 小部件示例 */
         // lv_demo_music(); /* 现代化、类似智能手机的音乐播放器演示 */
         // lv_demo_stress();       /* LVGL压力测试 */
@@ -566,5 +568,26 @@ i2c_handle0 = i2c_bus_handle;
     ESP_ERROR_CHECK(example_connect());
 
     coze_chat_app_init();
+    // 打印i2c_bus_handle的所有参数、通道号等信息
+    if (i2c_bus_handle) {
+        ESP_LOGI(TAG, "i2c_bus_handle: %p", (void*)i2c_bus_handle);
+        ESP_LOGI(TAG, "i2c_bus_config: clk_source=%d, i2c_port=%d, sda_io_num=%d, scl_io_num=%d, glitch_ignore_cnt=%d, enable_internal_pullup=%d",
+            i2c_bus_config.clk_source,
+            i2c_bus_config.i2c_port,
+            i2c_bus_config.sda_io_num,
+            i2c_bus_config.scl_io_num,
+            i2c_bus_config.glitch_ignore_cnt,
+            i2c_bus_config.flags.enable_internal_pullup
+        );
+    } else {
+        ESP_LOGW(TAG, "i2c_bus_handle is NULL");
+    }
+// 在关键点打印内存信息
+ESP_LOGI(TAG, "Free heap: %lu, Free PSRAM: %lu", 
+    esp_get_free_heap_size(),
+    esp_get_free_internal_heap_size());
+
+// 更详细的内存信息
+heap_caps_print_heap_info(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
 
 }
