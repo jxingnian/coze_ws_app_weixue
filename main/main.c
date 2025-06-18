@@ -2,7 +2,7 @@
  * @Author: xingnian j_xingnian@163.com
  * @Date: 2025-06-14 19:45:31
  * @LastEditors: 星年
- * @LastEditTime: 2025-06-18 14:20:51
+ * @LastEditTime: 2025-06-18 14:35:12
  * @FilePath: \coze_ws_app_weixue\main\main.c
  * @Description: 
  * 
@@ -89,7 +89,7 @@ static SemaphoreHandle_t lvgl_mux = NULL;  // LVGL互斥锁
 esp_lcd_touch_handle_t tp = NULL;  // 触摸屏控制句柄
 #endif
 
-#define EXAMPLE_LVGL_BUF_HEIGHT (EXAMPLE_LCD_V_RES / 4)  // LVGL缓冲区高度
+#define EXAMPLE_LVGL_BUF_HEIGHT (EXAMPLE_LCD_V_RES / 8)  // LVGL缓冲区高度
 #define EXAMPLE_LVGL_TICK_PERIOD_MS 2  // LVGL定时器周期(毫秒)
 #define EXAMPLE_LVGL_TASK_MAX_DELAY_MS 500  // LVGL任务最大延迟
 #define EXAMPLE_LVGL_TASK_MIN_DELAY_MS 1  // LVGL任务最小延迟

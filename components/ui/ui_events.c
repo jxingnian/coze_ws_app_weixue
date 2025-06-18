@@ -1,7 +1,7 @@
 /*
  * @Author: jixingnian@gmail.com
  * @Date: 2025-06-12 15:42:08
- * @LastEditTime: 2025-06-18 12:19:35
+ * @LastEditTime: 2025-06-18 14:39:08
  * @LastEditors: 星年
  * @Description: 
  * @FilePath: \coze_ws_app_weixue\components\ui\ui_events.c
@@ -82,6 +82,11 @@ void ui_events_init(void){
     lv_label_set_text(ui_network, NETWORK_WIFI);
     lv_label_set_text(ui_battery, BATTERY_LOW);
 
+    new_chat(ui_chat, "你好,我是小星");
+    new_chat(ui_chat, "你好,我是小星");
+    new_chat(ui_chat, "你好,我是小星");
+    new_chat(ui_chat, "你好,我是小星");
+    new_chat(ui_chat, "你好,我是小星");
     new_chat(ui_chat, "你好,我是小星");
 
     // 启动定时任务，每2秒增加一行文字
