@@ -2,7 +2,7 @@
  * @Author: xingnian j_xingnian@163.com
  * @Date: 2025-06-14 19:45:31
  * @LastEditors: 星年
- * @LastEditTime: 2025-06-18 14:35:12
+ * @LastEditTime: 2025-06-18 17:09:51
  * @FilePath: \coze_ws_app_weixue\main\main.c
  * @Description: 
  * 
@@ -238,18 +238,22 @@ static void example_lvgl_touch_cb(lv_indev_drv_t *drv, lv_indev_data_t *data)
     uint8_t tp_cnt = 0;
     /* 从触摸控制器读取数据到内存 */
     esp_lcd_touch_read_data(tp);
+    // ESP_LOGI(TAG, "Touch data read from controller");
     /* 从触摸控制器读取坐标 */
     bool tp_pressed = esp_lcd_touch_get_coordinates(tp, &tp_x, &tp_y, NULL, &tp_cnt, 1);
+    // ESP_LOGI(TAG, "Touch get_coordinates: pressed=%d, count=%d, x=%d, y=%d", tp_pressed, tp_cnt, tp_x, tp_y);
     if (tp_pressed && tp_cnt > 0)
     {
         data->point.x = tp_x;
         data->point.y = tp_y;
         data->state = LV_INDEV_STATE_PRESSED;
         ESP_LOGD(TAG, "Touch position: %d,%d", tp_x, tp_y);
+        ESP_LOGI(TAG, "Touch pressed at (%d, %d)", tp_x, tp_y);
     }
     else
     {
         data->state = LV_INDEV_STATE_RELEASED;
+        // ESP_LOGI(TAG, "Touch released");
     }
 }
 #endif
@@ -352,6 +356,32 @@ static esp_err_t spiffs_filesystem_init(void)
     return ESP_OK;
 }
 
+
+// 定时任务：每隔2秒显示一行新文字
+static void chat_task(void *pvParameters)
+{
+    int i = 0;
+    char buf[64];
+    while (1) {
+        snprintf(buf, sizeof(buf), "定时消息 %d", ++i);
+        vTaskDelay(pdMS_TO_TICKS(2000));
+
+        // 打印堆内存、psram内存、内部内存
+        ESP_LOGI(TAG, "Heap free: %u bytes", heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
+        ESP_LOGI(TAG, "Internal RAM free: %u bytes", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
+        #if CONFIG_SPIRAM
+            ESP_LOGI(TAG, "PSRAM free: %u bytes", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
+        #endif
+
+        if (example_lvgl_lock(-1))
+        {
+            show_text(buf);
+            // 释放互斥锁
+            example_lvgl_unlock();
+        }
+    }
+}
+
     i2c_master_bus_handle_t i2c_bus_handle = NULL;
     extern i2c_master_bus_handle_t   i2c_handle0;
 void app_main(void)
@@ -368,8 +398,8 @@ void app_main(void)
 
     spiffs_filesystem_init();
 
-    esp_log_level_set("lcd_panel.io.i2c", ESP_LOG_NONE);
-    esp_log_level_set("FT5x06", ESP_LOG_NONE);
+    // esp_log_level_set("lcd_panel.io.i2c", ESP_LOG_NONE);
+    // esp_log_level_set("FT5x06", ESP_LOG_NONE);
     static lv_disp_draw_buf_t disp_buf; // 包含内部图形缓冲区，称为绘制缓冲区
     static lv_disp_drv_t disp_drv;      // 包含回调函数
 
@@ -452,17 +482,11 @@ void app_main(void)
 #if EXAMPLE_USE_TOUCH
     // 初始化触摸屏
     esp_lcd_panel_io_handle_t tp_io_handle = NULL;
-    // 手动配置触摸屏I2C接口，而不是使用宏
-    esp_lcd_panel_io_i2c_config_t tp_io_config = {
-        .dev_addr = 0x38,           // FT5x06的默认I2C地址
-        .control_phase_bytes = 1,   // 控制阶段字节数
-        .dc_bit_offset = 7,         // 数据/命令位偏移
-        .lcd_cmd_bits = 8,          // LCD命令位宽
-        .lcd_param_bits = 8,        // LCD参数位宽
-        .scl_speed_hz = 100000,     // SCL频率100kHz，确保这是有效值
-    };
-    // 将触摸屏连接到I2C总线
-    ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c_v2((esp_lcd_i2c_bus_handle_t)i2c_bus_handle, &tp_io_config, &tp_io_handle));
+
+esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_FT5x06_CONFIG();
+tp_io_config.scl_speed_hz = 16 * 1000;
+ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus_handle, &tp_io_config, &tp_io_handle));
+
 
     const esp_lcd_touch_config_t tp_cfg = {
         .x_max = EXAMPLE_LCD_H_RES,
@@ -491,20 +515,11 @@ void app_main(void)
 
     ESP_LOGI(TAG, "Initialize LVGL library");
     lv_init();
-    // 分配LVGL使用的绘制缓冲区
-    // 使用PSRAM分配内存
-    lv_color_t *buf1 = heap_caps_malloc(EXAMPLE_LCD_H_RES * EXAMPLE_LVGL_BUF_HEIGHT * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    if (!buf1) {
-        buf1 = heap_caps_malloc(EXAMPLE_LCD_H_RES * EXAMPLE_LVGL_BUF_HEIGHT * sizeof(lv_color_t), MALLOC_CAP_DMA);
-    }
+    // 将LVGL绘制缓冲区分配到堆区
+    lv_color_t *buf1 = (lv_color_t *)malloc(EXAMPLE_LCD_H_RES * EXAMPLE_LVGL_BUF_HEIGHT * sizeof(lv_color_t));
     assert(buf1);
-
-    lv_color_t *buf2 = heap_caps_malloc(EXAMPLE_LCD_H_RES * EXAMPLE_LVGL_BUF_HEIGHT * sizeof(lv_color_t), MALLOC_CAP_SPIRAM);
-    if (!buf2) {
-        buf2 = heap_caps_malloc(EXAMPLE_LCD_H_RES * EXAMPLE_LVGL_BUF_HEIGHT * sizeof(lv_color_t), MALLOC_CAP_DMA);
-    }
+    lv_color_t *buf2 = (lv_color_t *)malloc(EXAMPLE_LCD_H_RES * EXAMPLE_LVGL_BUF_HEIGHT * sizeof(lv_color_t));
     assert(buf2);
-    
     // 初始化LVGL绘制缓冲区
     lv_disp_draw_buf_init(&disp_buf, buf1, buf2, EXAMPLE_LCD_H_RES * EXAMPLE_LVGL_BUF_HEIGHT);
 
@@ -559,8 +574,6 @@ void app_main(void)
         // 释放互斥锁
         example_lvgl_unlock();
     }
-
-
     
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -568,26 +581,7 @@ void app_main(void)
     ESP_ERROR_CHECK(example_connect());
 
     coze_chat_app_init();
-    // 打印i2c_bus_handle的所有参数、通道号等信息
-    if (i2c_bus_handle) {
-        ESP_LOGI(TAG, "i2c_bus_handle: %p", (void*)i2c_bus_handle);
-        ESP_LOGI(TAG, "i2c_bus_config: clk_source=%d, i2c_port=%d, sda_io_num=%d, scl_io_num=%d, glitch_ignore_cnt=%d, enable_internal_pullup=%d",
-            i2c_bus_config.clk_source,
-            i2c_bus_config.i2c_port,
-            i2c_bus_config.sda_io_num,
-            i2c_bus_config.scl_io_num,
-            i2c_bus_config.glitch_ignore_cnt,
-            i2c_bus_config.flags.enable_internal_pullup
-        );
-    } else {
-        ESP_LOGW(TAG, "i2c_bus_handle is NULL");
-    }
-// 在关键点打印内存信息
-ESP_LOGI(TAG, "Free heap: %lu, Free PSRAM: %lu", 
-    esp_get_free_heap_size(),
-    esp_get_free_internal_heap_size());
 
-// 更详细的内存信息
-heap_caps_print_heap_info(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
-
+    // 启动定时任务，每2秒增加一行文字
+    xTaskCreate(chat_task, "chat_task", 4096, NULL, 5, NULL);
 }
