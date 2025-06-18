@@ -100,7 +100,7 @@ esp_err_t audio_manager_init(void)
     // void *card = NULL;
     // esp_gmf_setup_periph_sdmmc(&card);
 
-    esp_gmf_setup_periph_i2c(0);
+    // esp_gmf_setup_periph_i2c(0);
     esp_gmf_setup_periph_aud_info play_info = {
         .sample_rate = 16000,
         .channel = CAHNNELS,

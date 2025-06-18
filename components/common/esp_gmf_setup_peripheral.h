@@ -8,10 +8,11 @@
 
 #include "esp_gmf_err.h"
 
+#include "driver/i2c_master.h"
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
-
+extern i2c_master_bus_handle_t   i2c_handle0;
 /**
  * @brief  Audio information structure of gmf element
  */

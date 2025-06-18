@@ -2,7 +2,7 @@
  * @Author: xingnian j_xingnian@163.com
  * @Date: 2025-06-14 19:45:31
  * @LastEditors: 星年
- * @LastEditTime: 2025-06-18 10:25:12
+ * @LastEditTime: 2025-06-18 11:52:27
  * @FilePath: \coze_ws_app_weixue\main\main.c
  * @Description: 
  * 
@@ -78,7 +78,7 @@ static SemaphoreHandle_t lvgl_mux = NULL;  // LVGL互斥锁
 #define EXAMPLE_LCD_H_RES 368  // 水平分辨率
 #define EXAMPLE_LCD_V_RES 448  // 垂直分辨率
 
-#define EXAMPLE_USE_TOUCH 0    // 是否使用触摸功能
+#define EXAMPLE_USE_TOUCH 1    // 是否使用触摸功能
 
 #if EXAMPLE_USE_TOUCH
 #define EXAMPLE_PIN_NUM_TOUCH_SCL (GPIO_NUM_14)  // 触摸屏I2C时钟线
@@ -352,6 +352,8 @@ static esp_err_t spiffs_filesystem_init(void)
     return ESP_OK;
 }
 
+    i2c_master_bus_handle_t i2c_bus_handle = NULL;
+    extern i2c_master_bus_handle_t   i2c_handle0;
 void app_main(void)
 {
 
@@ -366,47 +368,37 @@ void app_main(void)
 
     spiffs_filesystem_init();
 
-
-    
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
-
-    ESP_ERROR_CHECK(example_connect());
-
-    coze_chat_app_init();
-
     esp_log_level_set("lcd_panel.io.i2c", ESP_LOG_NONE);
     esp_log_level_set("FT5x06", ESP_LOG_NONE);
     static lv_disp_draw_buf_t disp_buf; // 包含内部图形缓冲区，称为绘制缓冲区
     static lv_disp_drv_t disp_drv;      // 包含回调函数
 
-    // ESP_LOGI(TAG, "Initialize I2C bus");
-    // i2c_master_bus_config_t i2c_bus_config = {
-    //     .clk_source = I2C_CLK_SRC_DEFAULT,
-    //     .i2c_port = TOUCH_HOST,
-    //     .sda_io_num = EXAMPLE_PIN_NUM_TOUCH_SDA,
-    //     .scl_io_num = EXAMPLE_PIN_NUM_TOUCH_SCL,
-    //     .glitch_ignore_cnt = 7,
-    //     .flags.enable_internal_pullup = true,
-    // };
+    ESP_LOGI(TAG, "Initialize I2C bus");
+    i2c_master_bus_config_t i2c_bus_config = {
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .i2c_port = TOUCH_HOST,
+        .sda_io_num = EXAMPLE_PIN_NUM_TOUCH_SDA,
+        .scl_io_num = EXAMPLE_PIN_NUM_TOUCH_SCL,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
+    };
     
-    // i2c_master_bus_handle_t i2c_bus_handle = NULL;
-    // ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_bus_config, &i2c_bus_handle));
+    ESP_ERROR_CHECK(i2c_new_master_bus(&i2c_bus_config, &i2c_bus_handle));
 
-    // // 初始化IO扩展器
-    // esp_io_expander_handle_t io_expander = NULL;
-    // ESP_ERROR_CHECK(esp_io_expander_new_i2c_tca9554(i2c_bus_handle, ESP_IO_EXPANDER_I2C_TCA9554_ADDRESS_000, &io_expander));
+    // 初始化IO扩展器
+    esp_io_expander_handle_t io_expander = NULL;
+    ESP_ERROR_CHECK(esp_io_expander_new_i2c_tca9554(i2c_bus_handle, ESP_IO_EXPANDER_I2C_TCA9554_ADDRESS_000, &io_expander));
 
-    // // 配置IO扩展器引脚方向和电平
-    // esp_io_expander_set_dir(io_expander, IO_EXPANDER_PIN_NUM_0 | IO_EXPANDER_PIN_NUM_1 | IO_EXPANDER_PIN_NUM_2, IO_EXPANDER_OUTPUT);
-    // esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_0, 0);
-    // esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_1, 0);
-    // esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_2, 0);
-    // vTaskDelay(pdMS_TO_TICKS(200));
-    // esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_0, 1);
-    // esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_1, 1);
-    // esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_2, 1);
-
+    // 配置IO扩展器引脚方向和电平
+    esp_io_expander_set_dir(io_expander, IO_EXPANDER_PIN_NUM_0 | IO_EXPANDER_PIN_NUM_1 | IO_EXPANDER_PIN_NUM_2, IO_EXPANDER_OUTPUT);
+    esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_0, 0);
+    esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_1, 0);
+    esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_2, 0);
+    vTaskDelay(pdMS_TO_TICKS(200));
+    esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_0, 1);
+    esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_1, 1);
+    esp_io_expander_set_level(io_expander, IO_EXPANDER_PIN_NUM_2, 1);
+i2c_handle0 = i2c_bus_handle;
 #if EXAMPLE_PIN_NUM_BK_LIGHT >= 0
     ESP_LOGI(TAG, "Turn off LCD backlight");
     gpio_config_t bk_gpio_config = {
@@ -565,5 +557,14 @@ void app_main(void)
         // 释放互斥锁
         example_lvgl_unlock();
     }
+
+
+    
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+
+    ESP_ERROR_CHECK(example_connect());
+
+    coze_chat_app_init();
 
 }
