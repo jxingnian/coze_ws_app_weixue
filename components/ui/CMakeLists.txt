@@ -1,8 +1,19 @@
-idf_component_register(SRCS screens/ui_Screen1.c
-                            ui.c
-                            components/ui_comp_hook.c
-                            ui_helpers.c
-                            images/ui_img_1706436910136_b31bcb12_png.c
-                      INCLUDE_DIRS "."
-                      REQUIRES lvgl__lvgl
-                      )
+SET(SOURCES components/ui_comp_textarea2.c
+    components/ui_comp.c
+    screens/ui_Main.c
+    ui.c
+    components/ui_comp_hook.c
+    ui_helpers.c
+    fonts/ui_font_battery.c
+    fonts/ui_font_dinglie16.c
+    fonts/ui_font_headPortrait.c
+    fonts/ui_font_network.c
+    fonts/ui_font_status.c
+    ui_events.c
+    fonts/ui_font_dinglie32.c)
+
+idf_component_register(
+    SRCS ${SOURCES}
+    INCLUDE_DIRS "."
+    REQUIRES lvgl__lvgl
+)
