@@ -49,7 +49,7 @@ typedef enum {
 } i2s_create_mode_t;
 
 static const char        *TAG = "SETUP_PERIPH";
-i2c_master_bus_handle_t   i2c_handle  = NULL;
+i2c_master_bus_handle_t   i2c_handle0  = NULL;
 
 #ifdef USE_ESP_GMF_ESP_CODEC_DEV_IO
 static esp_err_t setup_periph_i2s_tx_init(esp_gmf_setup_periph_aud_info *aud_info)
@@ -121,7 +121,7 @@ static const audio_codec_data_if_t *setup_periph_new_i2s_data(void *tx_hd, void 
 
 static void setup_periph_new_play_codec()
 {
-    audio_codec_i2c_cfg_t i2c_ctrl_cfg = {.addr = ES8311_CODEC_DEFAULT_ADDR, .port = 0, .bus_handle = i2c_handle};
+    audio_codec_i2c_cfg_t i2c_ctrl_cfg = {.addr = ES8311_CODEC_DEFAULT_ADDR, .port = 0, .bus_handle = i2c_handle0};
     out_ctrl_if = audio_codec_new_i2c_ctrl(&i2c_ctrl_cfg);
     gpio_if = audio_codec_new_gpio();
     // New output codec interface
@@ -138,7 +138,7 @@ static void setup_periph_new_play_codec()
 static void setup_periph_new_record_codec()
 {
 #if CODEC_ES8311_IN_OUT
-    audio_codec_i2c_cfg_t i2c_ctrl_cfg = {.addr = ES8311_CODEC_DEFAULT_ADDR, .port = 0, .bus_handle = i2c_handle};
+    audio_codec_i2c_cfg_t i2c_ctrl_cfg = {.addr = ES8311_CODEC_DEFAULT_ADDR, .port = 0, .bus_handle = i2c_handle0};
     in_ctrl_if = audio_codec_new_i2c_ctrl(&i2c_ctrl_cfg);
     gpio_if = audio_codec_new_gpio();
     // New output codec interface
@@ -151,7 +151,7 @@ static void setup_periph_new_record_codec()
     };
     in_codec_if = es8311_codec_new(&es8311_cfg);
 #elif CODEC_ES7210_IN_ES8311_OUT
-    audio_codec_i2c_cfg_t i2c_ctrl_cfg = {.addr = ES7210_CODEC_DEFAULT_ADDR, .port = 0, .bus_handle = i2c_handle};
+    audio_codec_i2c_cfg_t i2c_ctrl_cfg = {.addr = ES7210_CODEC_DEFAULT_ADDR, .port = 0, .bus_handle = i2c_handle0};
     in_ctrl_if = audio_codec_new_i2c_ctrl(&i2c_ctrl_cfg);
     es7210_codec_cfg_t es7210_cfg = {
         .ctrl_if = in_ctrl_if,
@@ -298,14 +298,14 @@ void esp_gmf_setup_periph_i2c(int port)
         .flags.enable_internal_pullup = true,
         .glitch_ignore_cnt = 7,
     };
-    i2c_new_master_bus(&i2c_config, &i2c_handle);
+    i2c_new_master_bus(&i2c_config, &i2c_handle0);
 }
 
 void esp_gmf_teardown_periph_i2c(int port)
 {
-    if (i2c_handle != NULL) {
-        i2c_del_master_bus(i2c_handle);
-        i2c_handle = NULL;
+    if (i2c_handle0 != NULL) {
+        i2c_del_master_bus(i2c_handle0);
+        i2c_handle0 = NULL;
     }
 }
 

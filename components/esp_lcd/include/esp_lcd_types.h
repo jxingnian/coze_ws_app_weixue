@@ -41,25 +41,15 @@ typedef enum {
 } lcd_rgb_element_order_t;
 
 /** @cond */
-/**
- * @brief LCD color space type definition (WRONG!)
- * @deprecated RGB and BGR should belong to the same color space, but this enum take them both as two different color spaces.
- *             If you want to use a enum to describe a color space, please use lcd_color_space_t instead.
- */
-typedef enum {
-    ESP_LCD_COLOR_SPACE_RGB,        /*!< Color space: RGB */
-    ESP_LCD_COLOR_SPACE_BGR,        /*!< Color space: BGR */
-    ESP_LCD_COLOR_SPACE_MONOCHROME, /*!< Color space: monochrome */
-} esp_lcd_color_space_t __attribute__((deprecated));
-
-// Ensure binary compatibility with lcd_color_rgb_endian_t
-ESP_STATIC_ASSERT((lcd_rgb_element_order_t)ESP_LCD_COLOR_SPACE_RGB == LCD_RGB_ELEMENT_ORDER_RGB, "ESP_LCD_COLOR_SPACE_RGB is not compatible with LCD_RGB_ORDER_RGB");
-ESP_STATIC_ASSERT((lcd_rgb_element_order_t)ESP_LCD_COLOR_SPACE_BGR == LCD_RGB_ELEMENT_ORDER_BGR, "ESP_LCD_COLOR_SPACE_BGR is not compatible with LCD_RGB_ORDER_BGR");
-
 /// for backward compatible
 typedef lcd_rgb_element_order_t lcd_color_rgb_endian_t;
-#define LCD_RGB_ENDIAN_RGB LCD_RGB_ELEMENT_ORDER_RGB
-#define LCD_RGB_ENDIAN_BGR LCD_RGB_ELEMENT_ORDER_BGR
+#define LCD_RGB_ENDIAN_RGB (lcd_color_rgb_endian_t)LCD_RGB_ELEMENT_ORDER_RGB
+#define LCD_RGB_ENDIAN_BGR (lcd_color_rgb_endian_t)LCD_RGB_ELEMENT_ORDER_BGR
+
+typedef lcd_rgb_element_order_t esp_lcd_color_space_t;
+#define ESP_LCD_COLOR_SPACE_RGB (esp_lcd_color_space_t)LCD_RGB_ELEMENT_ORDER_RGB
+#define ESP_LCD_COLOR_SPACE_BGR (esp_lcd_color_space_t)LCD_RGB_ELEMENT_ORDER_BGR
+#define ESP_LCD_COLOR_SPACE_MONOCHROME (esp_lcd_color_space_t)2
 /** @endcond */
 
 /**
@@ -84,6 +74,22 @@ typedef bool (*esp_lcd_panel_io_color_trans_done_cb_t)(esp_lcd_panel_io_handle_t
 typedef struct {
     esp_lcd_panel_io_color_trans_done_cb_t on_color_trans_done; /*!< Callback invoked when color data transfer has finished */
 } esp_lcd_panel_io_callbacks_t;
+
+/**
+ * @brief Configuration of LCD color conversion
+ */
+typedef struct {
+    lcd_color_range_t in_color_range;    /*!< Color range of the input color */
+    lcd_color_range_t out_color_range;   /*!< Color range of the output color */
+    union {
+        struct {
+            lcd_yuv_conv_std_t conv_std; /*!< YUV conversion standard: BT601, BT709 */
+            struct {
+                lcd_yuv422_pack_order_t in_pack_order; /*!< YUV422 packing order of the input color */
+            } yuv422; /*!< YUV422 specific */
+        } yuv; /*!< YUV specific */
+    } spec; /*!< Extra configuration for specific color conversion */
+} esp_lcd_color_conv_config_t;
 
 #ifdef __cplusplus
 }
