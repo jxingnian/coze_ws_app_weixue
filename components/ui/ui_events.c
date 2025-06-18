@@ -1,7 +1,7 @@
 /*
  * @Author: jixingnian@gmail.com
  * @Date: 2025-06-12 15:42:08
- * @LastEditTime: 2025-06-18 17:04:56
+ * @LastEditTime: 2025-06-18 17:29:35
  * @LastEditors: 星年
  * @Description: 
  * @FilePath: \coze_ws_app_weixue\components\ui\ui_events.c
@@ -21,6 +21,7 @@ static const char *TAG = "ui_events";
 #define CHAT_X 0
 #define CHAT_Y -140
 #define CHAT_MARGIN 20
+#define MAX_CHAT_LINES 30  // 最大消息行数限制
 
 /* 电池电量低 */
 #define BATTERY_LOW "1"
@@ -42,38 +43,68 @@ static const char *TAG = "ui_events";
 #define STATUS_MIC "9"
 
 lv_obj_t * ui_chat;
+lv_obj_t * chat_messages[MAX_CHAT_LINES] = {NULL};  // 存储消息对象的数组
 
 int chat_count = 0;
 
 void new_chat(lv_obj_t *ui_chat, char *text){
-    // 在 ui_Panel1 上创建一个新的文本区域对象用于显示聊天消息
+    // 检查是否达到最大消息数量
+    if (chat_count >= MAX_CHAT_LINES) {
+        // 删除最旧的消息（第一条）
+        if (chat_messages[0] != NULL) {
+            lv_obj_del(chat_messages[0]);
+            
+            // 将所有消息向前移动一位
+            for (int i = 0; i < MAX_CHAT_LINES - 1; i++) {
+                chat_messages[i] = chat_messages[i + 1];
+                
+                // 如果消息存在，更新其Y坐标
+                if (chat_messages[i] != NULL) {
+                    lv_obj_set_y(chat_messages[i], CHAT_Y + i * (CHAT_HEIGHT + CHAT_MARGIN));
+                }
+            }
+            
+            // 最后一个位置设为NULL
+            chat_messages[MAX_CHAT_LINES - 1] = NULL;
+            
+            // 不增加chat_count，因为总数保持不变
+        }
+    } else {
+        // 未达到最大数量，增加计数
+        chat_count++;
+    }
+    
+    // 创建新消息
+    int msg_index = (chat_count >= MAX_CHAT_LINES) ? (MAX_CHAT_LINES - 1) : (chat_count - 1);
     ui_chat = lv_textarea_create(ui_Panel1);
-
+    
+    // 保存到消息数组中
+    chat_messages[msg_index] = ui_chat;
+    
     // 设置文本区域的宽度为 CHAT_WIDTH
     lv_obj_set_width(ui_chat, CHAT_WIDTH);
-
+    
     // 设置文本区域的高度为 CHAT_HEIGHT
     lv_obj_set_height(ui_chat, CHAT_HEIGHT);
-
+    
     // 设置文本区域的 X 坐标为 CHAT_X
     lv_obj_set_x(ui_chat, CHAT_X);
-
-    // 设置文本区域的 Y 坐标，初始为 CHAT_Y，后续每条消息向下偏移 (CHAT_HEIGHT + CHAT_MARGIN)
-    // chat_count 用于记录当前消息的数量，实现消息的堆叠显示
-    lv_obj_set_y(ui_chat, CHAT_Y + chat_count++ * (CHAT_HEIGHT + CHAT_MARGIN));
-
+    
+    // 设置文本区域的 Y 坐标
+    lv_obj_set_y(ui_chat, CHAT_Y + msg_index * (CHAT_HEIGHT + CHAT_MARGIN));
+    
     // 设置文本区域在父容器中的对齐方式为居中
     lv_obj_set_align(ui_chat, LV_ALIGN_CENTER);
-
+    
     // 清除可点击聚焦标志，禁止该文本区域获取焦点（不可编辑，仅显示）
     lv_obj_clear_flag(ui_chat, LV_OBJ_FLAG_CLICK_FOCUSABLE);
-
+    
     // 设置文本区域显示的内容为传入的 text 字符串
     lv_textarea_set_text(ui_chat, text);
-
+    
     // 设置文本区域的字体为自定义字体 ui_font_dinglie32
     lv_obj_set_style_text_font(ui_chat, &ui_font_dinglie32, LV_PART_MAIN | LV_STATE_DEFAULT);
-
+    
     // 设置文本区域为单行显示，超出部分自动滚动
     lv_textarea_set_one_line(ui_chat, true);
 }
@@ -84,10 +115,15 @@ void show_text(char *text){
     new_chat(ui_chat, text);
     
     // 计算需要滚动的位置
-    int32_t scroll_y = chat_count * (CHAT_HEIGHT + CHAT_MARGIN);
+    int32_t scroll_y = 0;
+    if (chat_count >= MAX_CHAT_LINES) {
+        scroll_y = (MAX_CHAT_LINES - 1) * (CHAT_HEIGHT + CHAT_MARGIN);
+    } else {
+        scroll_y = (chat_count - 1) * (CHAT_HEIGHT + CHAT_MARGIN);
+    }
     
     // 滚动到最新消息的位置
-    lv_obj_scroll_to_y(ui_Panel1, scroll_y, LV_ANIM_ON);
+    lv_obj_scroll_to_y(ui_Panel1, scroll_y, LV_ANIM_OFF);
 }
 
 void ui_events_init(void){
@@ -105,6 +141,11 @@ void ui_events_init(void){
     
     // 设置滚动方向仅为垂直方向
     lv_obj_set_scroll_dir(ui_Panel1, LV_DIR_VER);
+
+    // 初始化消息数组
+    for (int i = 0; i < MAX_CHAT_LINES; i++) {
+        chat_messages[i] = NULL;
+    }
 
     new_chat(ui_chat, "你好,我是小星");
 }
