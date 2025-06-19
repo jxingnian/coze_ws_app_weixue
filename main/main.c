@@ -2,7 +2,7 @@
  * @Author: xingnian j_xingnian@163.com
  * @Date: 2025-06-14 19:45:31
  * @LastEditors: 星年
- * @LastEditTime: 2025-06-18 17:09:51
+ * @LastEditTime: 2025-06-19 17:37:49
  * @FilePath: \coze_ws_app_weixue\main\main.c
  * @Description: 
  * 
@@ -48,7 +48,6 @@
 
 static const char *TAG = "COZE_CHAT_WS";
 
-static SemaphoreHandle_t lvgl_mux = NULL;  // LVGL互斥锁
 
 #define LCD_HOST SPI2_HOST      // LCD使用的SPI主机
 #define TOUCH_HOST I2C_NUM_0    // 触摸屏使用的I2C主机
@@ -248,7 +247,7 @@ static void example_lvgl_touch_cb(lv_indev_drv_t *drv, lv_indev_data_t *data)
         data->point.y = tp_y;
         data->state = LV_INDEV_STATE_PRESSED;
         ESP_LOGD(TAG, "Touch position: %d,%d", tp_x, tp_y);
-        ESP_LOGI(TAG, "Touch pressed at (%d, %d)", tp_x, tp_y);
+        // ESP_LOGI(TAG, "Touch pressed at (%d, %d)", tp_x, tp_y);
     }
     else
     {
@@ -268,31 +267,6 @@ static void example_increase_lvgl_tick(void *arg)
     /* 告诉LVGL已经过去了多少毫秒 */
     lv_tick_inc(EXAMPLE_LVGL_TICK_PERIOD_MS);
 }
-
-/**
- * @brief 获取LVGL互斥锁
- * 
- * @param timeout_ms 超时时间(毫秒)
- * @return true 成功获取锁
- * @return false 获取锁失败
- */
-static bool example_lvgl_lock(int timeout_ms)
-{
-    assert(lvgl_mux && "bsp_display_start must be called first");
-
-    const TickType_t timeout_ticks = (timeout_ms == -1) ? portMAX_DELAY : pdMS_TO_TICKS(timeout_ms);
-    return xSemaphoreTake(lvgl_mux, timeout_ticks) == pdTRUE;
-}
-
-/**
- * @brief 释放LVGL互斥锁
- */
-static void example_lvgl_unlock(void)
-{
-    assert(lvgl_mux && "bsp_display_start must be called first");
-    xSemaphoreGive(lvgl_mux);
-}
-
 /**
  * @brief LVGL任务处理函数
  * 
@@ -364,7 +338,7 @@ static void chat_task(void *pvParameters)
     char buf[64];
     while (1) {
         snprintf(buf, sizeof(buf), "定时消息 %d", ++i);
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(200));
 
         // 打印堆内存、psram内存、内部内存
         ESP_LOGI(TAG, "Heap free: %u bytes", heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
@@ -373,12 +347,12 @@ static void chat_task(void *pvParameters)
             ESP_LOGI(TAG, "PSRAM free: %u bytes", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
         #endif
 
-        if (example_lvgl_lock(-1))
-        {
-            show_text(buf);
-            // 释放互斥锁
-            example_lvgl_unlock();
-        }
+        // if (example_lvgl_lock(-1))
+        // {
+            add_subtitle(buf);
+        //     // 释放互斥锁
+        //     example_lvgl_unlock();
+        // }
     }
 }
 
@@ -554,26 +528,11 @@ ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus_handle, &tp_io_config, &tp_io_h
     lv_indev_drv_register(&indev_drv);
 #endif
 
-    // 创建LVGL互斥锁
-    lvgl_mux = xSemaphoreCreateMutex();
-    assert(lvgl_mux);
-    xTaskCreate(example_lvgl_port_task, "LVGL", EXAMPLE_LVGL_TASK_STACK_SIZE, NULL, EXAMPLE_LVGL_TASK_PRIORITY, NULL);
-
-    ESP_LOGI(TAG, "Display LVGL demos");
-    // 获取互斥锁，因为LVGL API不是线程安全的
-    if (example_lvgl_lock(-1))
-    {
-        ui_init();  // 初始化用户界面
 
         ui_events_init();
-        // lv_demo_widgets(); /* 小部件示例 */
-        // lv_demo_music(); /* 现代化、类似智能手机的音乐播放器演示 */
-        // lv_demo_stress();       /* LVGL压力测试 */
-        // lv_demo_benchmark(); /* 用于测量LVGL性能或比较不同设置的演示 */
 
-        // 释放互斥锁
-        example_lvgl_unlock();
-    }
+    xTaskCreate(example_lvgl_port_task, "LVGL", EXAMPLE_LVGL_TASK_STACK_SIZE, NULL, EXAMPLE_LVGL_TASK_PRIORITY, NULL);
+  
     
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
@@ -583,5 +542,5 @@ ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus_handle, &tp_io_config, &tp_io_h
     coze_chat_app_init();
 
     // 启动定时任务，每2秒增加一行文字
-    xTaskCreate(chat_task, "chat_task", 4096, NULL, 5, NULL);
+    // xTaskCreate(chat_task, "chat_task", 4096, NULL, 5, NULL);
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: jixingnian@gmail.com
  * @Date: 2025-06-12 15:42:08
- * @LastEditTime: 2025-06-18 17:29:35
+ * @LastEditTime: 2025-06-19 17:38:54
  * @LastEditors: 星年
  * @Description: 
  * @FilePath: \coze_ws_app_weixue\components\ui\ui_events.c
@@ -11,7 +11,7 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
+#include "freertos/event_groups.h"
 #include "esp_heap_caps.h"  // 添加堆内存管理头文件
 
 static const char *TAG = "ui_events";
@@ -22,6 +22,7 @@ static const char *TAG = "ui_events";
 #define CHAT_Y -140
 #define CHAT_MARGIN 20
 #define MAX_CHAT_LINES 30  // 最大消息行数限制
+#define MAX_SUBTITLE_LEN 1024  // 字幕最大长度
 
 /* 电池电量低 */
 #define BATTERY_LOW "1"
@@ -46,6 +47,67 @@ lv_obj_t * ui_chat;
 lv_obj_t * chat_messages[MAX_CHAT_LINES] = {NULL};  // 存储消息对象的数组
 
 int chat_count = 0;
+
+// 字幕缓存
+static char subtitle_buffer[MAX_SUBTITLE_LEN] = {0};
+static int subtitle_len = 0;
+
+SemaphoreHandle_t lvgl_mux = NULL;  // LVGL互斥锁
+
+/**
+ * @brief 获取LVGL互斥锁
+ * 
+ * @param timeout_ms 超时时间(毫秒)
+ * @return true 成功获取锁
+ * @return false 获取锁失败
+ */
+ bool example_lvgl_lock(int timeout_ms)
+{
+    assert(lvgl_mux && "bsp_display_start must be called first");
+
+    const TickType_t timeout_ticks = (timeout_ms == -1) ? portMAX_DELAY : pdMS_TO_TICKS(timeout_ms);
+    return xSemaphoreTake(lvgl_mux, timeout_ticks) == pdTRUE;
+}
+
+
+/**
+ * @brief 释放LVGL互斥锁
+ */
+ void example_lvgl_unlock(void)
+{
+    assert(lvgl_mux && "bsp_display_start must be called first");
+    xSemaphoreGive(lvgl_mux);
+}
+
+/**
+ * @brief 添加字幕文本并在适当时候显示
+ * 
+ * @param text 字幕文本片段
+ */
+void add_subtitle(char *text) {
+    // 将接收到的新文本追加到字幕缓冲区中
+    strncat(subtitle_buffer, text, MAX_SUBTITLE_LEN - subtitle_len - 1);
+    subtitle_len = strlen(subtitle_buffer);
+
+    // 检查常见的标点符号以确定是否接收到完整的句子
+    char *end_of_sentence = strpbrk(subtitle_buffer, "，。？,.?;；:：、");
+
+    while (end_of_sentence != NULL) {
+        // 在标点符号处终止句子
+        *(end_of_sentence + 1) = '\0';
+
+        // 显示完整的句子
+        show_text(subtitle_buffer);
+
+        // 将剩余文本移到缓冲区的开头
+        subtitle_len = strlen(end_of_sentence + 1);
+        memmove(subtitle_buffer, end_of_sentence + 1, subtitle_len + 1);
+
+        // 检查剩余缓冲区中是否有另一个完整的句子
+        end_of_sentence = strpbrk(subtitle_buffer, "，。？,.?;；:：、");
+    }
+}
+
 
 void new_chat(lv_obj_t *ui_chat, char *text){
     // 检查是否达到最大消息数量
@@ -110,42 +172,66 @@ void new_chat(lv_obj_t *ui_chat, char *text){
 }
 
 // 显示文字
-void show_text(char *text){
-    ESP_LOGI(TAG, "show_text: %s", text);
-    new_chat(ui_chat, text);
-    
-    // 计算需要滚动的位置
-    int32_t scroll_y = 0;
-    if (chat_count >= MAX_CHAT_LINES) {
-        scroll_y = (MAX_CHAT_LINES - 1) * (CHAT_HEIGHT + CHAT_MARGIN);
-    } else {
-        scroll_y = (chat_count - 1) * (CHAT_HEIGHT + CHAT_MARGIN);
+void show_text(char *text){    
+    if (example_lvgl_lock(-1))
+    {
+        ESP_LOGI(TAG, "show_text: %s", text);
+        new_chat(ui_chat, text);
+        
+        // 计算需要滚动的位置
+        int32_t scroll_y = 0;
+        if (chat_count >= MAX_CHAT_LINES) {
+            scroll_y = (MAX_CHAT_LINES - 1) * (CHAT_HEIGHT + CHAT_MARGIN);
+        } else {
+            scroll_y = (chat_count - 1) * (CHAT_HEIGHT + CHAT_MARGIN);
+        }
+        
+        // 滚动到最新消息的位置
+        lv_obj_scroll_to_y(ui_Panel1, scroll_y, LV_ANIM_OFF);
+        // 释放互斥锁
+        example_lvgl_unlock();
     }
-    
-    // 滚动到最新消息的位置
-    lv_obj_scroll_to_y(ui_Panel1, scroll_y, LV_ANIM_OFF);
 }
 
 void ui_events_init(void){
-    lv_label_set_text(ui_Time, "13:14");
+    // 创建LVGL互斥锁
+    lvgl_mux = xSemaphoreCreateMutex();
+    assert(lvgl_mux);
+    ESP_LOGI(TAG, "Display LVGL demos");
+    // 获取互斥锁，因为LVGL API不是线程安全的
+    if (example_lvgl_lock(-1))
+    {
+  
+        ui_init();  // 初始化用户界面   
 
-    lv_label_set_text(ui_status, STATUS_WAIT);
-    lv_label_set_text(ui_network, NETWORK_WIFI);
-    lv_label_set_text(ui_battery, BATTERY_LOW);
-    
-    // 设置Panel1为可滚动
-    lv_obj_add_flag(ui_Panel1, LV_OBJ_FLAG_SCROLLABLE);
-    
-    // 设置滚动条模式为自动
-    lv_obj_set_scrollbar_mode(ui_Panel1, LV_SCROLLBAR_MODE_AUTO);
-    
-    // 设置滚动方向仅为垂直方向
-    lv_obj_set_scroll_dir(ui_Panel1, LV_DIR_VER);
+        // lv_demo_widgets(); /* 小部件示例 */
+        // lv_demo_music(); /* 现代化、类似智能手机的音乐播放器演示 */
+        // lv_demo_stress();       /* LVGL压力测试 */
+        // lv_demo_benchmark(); /* 用于测量LVGL性能或比较不同设置的演示 */
 
-    // 初始化消息数组
-    for (int i = 0; i < MAX_CHAT_LINES; i++) {
-        chat_messages[i] = NULL;
+
+        lv_label_set_text(ui_Time, "13:14");
+
+        lv_label_set_text(ui_status, STATUS_WAIT);
+        lv_label_set_text(ui_network, NETWORK_WIFI);
+        lv_label_set_text(ui_battery, BATTERY_LOW);
+        
+        // 设置Panel1为可滚动
+        lv_obj_add_flag(ui_Panel1, LV_OBJ_FLAG_SCROLLABLE);
+        
+        // 设置滚动条模式为自动
+        lv_obj_set_scrollbar_mode(ui_Panel1, LV_SCROLLBAR_MODE_AUTO);
+        
+        // 设置滚动方向仅为垂直方向
+        lv_obj_set_scroll_dir(ui_Panel1, LV_DIR_VER);
+
+        // 初始化消息数组
+        for (int i = 0; i < MAX_CHAT_LINES; i++) {
+            chat_messages[i] = NULL;
+        }
+
+        new_chat(ui_chat, "你好,我是小星");
+        // 释放互斥锁
+        example_lvgl_unlock();
     }
-
-    new_chat(ui_chat, "你好,我是小星");
 }
