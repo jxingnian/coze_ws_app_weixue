@@ -361,7 +361,7 @@ static void chat_task(void *pvParameters)
 void app_main(void)
 {
 
-    esp_log_level_set("*", ESP_LOG_INFO);
+    // esp_log_level_set("*", ESP_LOG_INFO);
 
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -372,9 +372,6 @@ void app_main(void)
 
     spiffs_filesystem_init();
 
-    esp_log_level_set("lcd_panel.io.i2c", ESP_LOG_NONE);
-    esp_log_level_set("FT5x06", ESP_LOG_NONE);
-    // esp_log_level_set("i2c.master", ESP_LOG_NONE);
     
     static lv_disp_draw_buf_t disp_buf; // 包含内部图形缓冲区，称为绘制缓冲区
     static lv_disp_drv_t disp_drv;      // 包含回调函数
@@ -543,6 +540,9 @@ ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus_handle, &tp_io_config, &tp_io_h
 
     coze_chat_app_init();
 
+    esp_log_level_set("lcd_panel.io.i2c", ESP_LOG_NONE);
+    esp_log_level_set("FT5x06", ESP_LOG_NONE);
+    esp_log_level_set("i2c.master", ESP_LOG_NONE);
     // 启动定时任务，每2秒增加一行文字
     // xTaskCreate(chat_task, "chat_task", 4096, NULL, 5, NULL);
 }
