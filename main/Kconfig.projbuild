@@ -7,7 +7,7 @@ rsource "../components/common/Kconfig.in"
 #
 choice
     prompt "Audio Conversation Trigger Mode"
-    default CONTINUOUS_CONVERSATION_MODE
+    default KEY_PRESS_DIALOG_MODE
 
 config VOICE_WAKEUP_MODE
     bool "Wake Word Mode"

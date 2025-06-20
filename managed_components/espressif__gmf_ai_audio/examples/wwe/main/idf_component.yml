@@ -1,3 +1,0 @@
-dependencies:
-  espressif/gmf_ai_audio:
-    override_path: ../../../../gmf_ai_audio

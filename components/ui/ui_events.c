@@ -1,8 +1,8 @@
 /*
  * @Author: jixingnian@gmail.com
  * @Date: 2025-06-12 15:42:08
- * @LastEditTime: 2025-06-19 17:38:54
- * @LastEditors: 星年
+ * @LastEditTime: 2025-06-19 19:50:54
+ * @LastEditors: 星年 && j_xingnian@163.com
  * @Description: 
  * @FilePath: \coze_ws_app_weixue\components\ui\ui_events.c
  * 遇事不决，可问春风
@@ -16,13 +16,13 @@
 
 static const char *TAG = "ui_events";
 
-#define CHAT_HEIGHT 50
+#define CHAT_HEIGHT 250
 #define CHAT_WIDTH 300
 #define CHAT_X 0
-#define CHAT_Y -140
+#define CHAT_Y -15
 #define CHAT_MARGIN 20
 #define MAX_CHAT_LINES 30  // 最大消息行数限制
-#define MAX_SUBTITLE_LEN 1024  // 字幕最大长度
+#define MAX_SUBTITLE_LEN 4096  // 字幕最大长度
 
 /* 电池电量低 */
 #define BATTERY_LOW "1"
@@ -78,6 +78,20 @@ SemaphoreHandle_t lvgl_mux = NULL;  // LVGL互斥锁
     assert(lvgl_mux && "bsp_display_start must be called first");
     xSemaphoreGive(lvgl_mux);
 }
+static uint8_t subtitle_flag = 0;
+static uint8_t subtitle_count = 0;
+
+// 定时任务函数，每500ms执行一次，内容为空
+static void ui_events_timer_task(void *pvParameters)
+{
+    while (1) {
+        vTaskDelay(pdMS_TO_TICKS(200));
+        if(subtitle_flag == 1){
+            vTaskDelay(pdMS_TO_TICKS(1000));
+            show_and_clear_subtitle();
+        }
+    }
+}
 
 /**
  * @brief 添加字幕文本并在适当时候显示
@@ -88,23 +102,41 @@ void add_subtitle(char *text) {
     // 将接收到的新文本追加到字幕缓冲区中
     strncat(subtitle_buffer, text, MAX_SUBTITLE_LEN - subtitle_len - 1);
     subtitle_len = strlen(subtitle_buffer);
+    if(subtitle_flag == 0){
+        subtitle_flag = 1;
+    }
+    // // 检查常见的标点符号以确定是否接收到完整的句子
+    // char *end_of_sentence = strpbrk(subtitle_buffer, "，。？,.?;；:：、");
 
-    // 检查常见的标点符号以确定是否接收到完整的句子
-    char *end_of_sentence = strpbrk(subtitle_buffer, "，。？,.?;；:：、");
+    // while (end_of_sentence != NULL) {
+    //     // 在标点符号处终止句子
+    //     *(end_of_sentence + 1) = '\0';
 
-    while (end_of_sentence != NULL) {
-        // 在标点符号处终止句子
-        *(end_of_sentence + 1) = '\0';
+    //     // 显示完整的句子
+    //     show_text(subtitle_buffer);
 
-        // 显示完整的句子
+    //     // 将剩余文本移到缓冲区的开头
+    //     subtitle_len = strlen(end_of_sentence + 1);
+    //     memmove(subtitle_buffer, end_of_sentence + 1, subtitle_len + 1);
+
+    //     // 检查剩余缓冲区中是否有另一个完整的句子
+    //     end_of_sentence = strpbrk(subtitle_buffer, "，。？,.?;；:：、");
+    // }
+}
+
+/**
+ * @brief 显示并清空字幕缓冲区
+ * 
+ * 显示当前字幕缓冲区中的所有文本，然后清空缓冲区
+ */
+void show_and_clear_subtitle(void) {
+    if (subtitle_len > 0) {
+        // 显示缓冲区中的文本
         show_text(subtitle_buffer);
-
-        // 将剩余文本移到缓冲区的开头
-        subtitle_len = strlen(end_of_sentence + 1);
-        memmove(subtitle_buffer, end_of_sentence + 1, subtitle_len + 1);
-
-        // 检查剩余缓冲区中是否有另一个完整的句子
-        end_of_sentence = strpbrk(subtitle_buffer, "，。？,.?;；:：、");
+        
+        // 清空缓冲区
+        memset(subtitle_buffer, 0, MAX_SUBTITLE_LEN);
+        subtitle_len = 0;
     }
 }
 
@@ -167,9 +199,10 @@ void new_chat(lv_obj_t *ui_chat, char *text){
     // 设置文本区域的字体为自定义字体 ui_font_dinglie32
     lv_obj_set_style_text_font(ui_chat, &ui_font_dinglie32, LV_PART_MAIN | LV_STATE_DEFAULT);
     
-    // 设置文本区域为单行显示，超出部分自动滚动
-    lv_textarea_set_one_line(ui_chat, true);
+    // // 设置文本区域为单行显示，超出部分自动滚动
+    // lv_textarea_set_one_line(ui_chat, true);
 }
+
 
 // 显示文字
 void show_text(char *text){    
@@ -192,6 +225,7 @@ void show_text(char *text){
         example_lvgl_unlock();
     }
 }
+
 
 void ui_events_init(void){
     // 创建LVGL互斥锁
@@ -230,8 +264,12 @@ void ui_events_init(void){
             chat_messages[i] = NULL;
         }
 
-        new_chat(ui_chat, "你好,我是小星");
+        // new_chat(ui_chat, "你好,我是小星");
         // 释放互斥锁
         example_lvgl_unlock();
     }
+
+    // 创建定时任务，每500ms执行一次
+    xTaskCreate(ui_events_timer_task, "ui_events_timer_task", 2048, NULL, 5, NULL);
+    
 }

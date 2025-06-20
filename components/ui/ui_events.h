@@ -1,3 +1,13 @@
+/*
+ * @Author: xingnian j_xingnian@163.com
+ * @Date: 2025-06-19 18:41:31
+ * @LastEditors: 星年 && j_xingnian@163.com
+ * @LastEditTime: 2025-06-19 19:15:39
+ * @FilePath: \coze_ws_app_weixue\components\ui\ui_events.h
+ * @Description: 
+ * 
+ * Copyright (c) 2025 by ${git_name_email}, All Rights Reserved. 
+ */
 /*** 
  * @Author: jixingnian@gmail.com
  * @Date: 2025-06-18 12:00:13
@@ -25,7 +35,7 @@ void show_text(char *text);
 void add_subtitle(char *text);
 bool example_lvgl_lock(int timeout_ms);
 void example_lvgl_unlock(void);
-
+void show_and_clear_subtitle(void);
 #ifdef __cplusplus
 extern "C" {
 #endif
