@@ -2,7 +2,7 @@
  * @Author: xingnian j_xingnian@163.com
  * @Date: 2025-06-14 19:45:31
  * @LastEditors: 星年
- * @LastEditTime: 2025-06-20 14:22:53
+ * @LastEditTime: 2025-06-20 15:18:52
  * @FilePath: \coze_ws_app_weixue\main\main.c
  * @Description: 
  * 
@@ -45,6 +45,8 @@
 
 #include "esp_io_expander_tca9554.h" // TCA9554 IO扩展器
 #include "ui.h"                 // 用户界面
+
+#include "esp_wifi.h"  // Add this include for WiFi functions
 
 static const char *TAG = "COZE_CHAT_WS";
 
@@ -331,33 +333,29 @@ static esp_err_t spiffs_filesystem_init(void)
 }
 
 
-// 定时任务：每隔2秒显示一行新文字
+// 定时任务
 static void chat_task(void *pvParameters)
 {
     int i = 0;
     char buf[64];
     while (1) {
-        snprintf(buf, sizeof(buf), "定时消息 %d", ++i);
-        vTaskDelay(pdMS_TO_TICKS(200));
-
-        // 打印堆内存、psram内存、内部内存
-        ESP_LOGI(TAG, "Heap free: %u bytes", heap_caps_get_free_size(MALLOC_CAP_DEFAULT));
-        ESP_LOGI(TAG, "Internal RAM free: %u bytes", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
-        #if CONFIG_SPIRAM
-            ESP_LOGI(TAG, "PSRAM free: %u bytes", heap_caps_get_free_size(MALLOC_CAP_SPIRAM));
-        #endif
-
-        // if (example_lvgl_lock(-1))
-        // {
-            add_subtitle(buf);
-        //     // 释放互斥锁
-        //     example_lvgl_unlock();
-        // }
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        wifi_ap_record_t ap_info;
+        esp_err_t ret = esp_wifi_sta_get_ap_info(&ap_info);
+        if (ret == ESP_OK) {
+            set_network_label(NETWORK_WIFI);
+            // ESP_LOGI(TAG, "Connected to WiFi SSID: %s", ap_info.ssid);
+        } else {
+            ESP_LOGI(TAG, "Not connected to any WiFi network");
+        }
     }
 }
 
     i2c_master_bus_handle_t i2c_bus_handle = NULL;
     extern i2c_master_bus_handle_t   i2c_handle0;
+
+
+
 void app_main(void)
 {
 
@@ -544,5 +542,6 @@ ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus_handle, &tp_io_config, &tp_io_h
     esp_log_level_set("FT5x06", ESP_LOG_NONE);
     esp_log_level_set("i2c.master", ESP_LOG_NONE);
     // 启动定时任务，每2秒增加一行文字
-    // xTaskCreate(chat_task, "chat_task", 4096, NULL, 5, NULL);
+    xTaskCreate(chat_task, "chat_task", 4096, NULL, 5, NULL);
+
 }

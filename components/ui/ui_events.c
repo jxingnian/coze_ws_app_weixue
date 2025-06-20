@@ -1,8 +1,8 @@
 /*
  * @Author: jixingnian@gmail.com
  * @Date: 2025-06-12 15:42:08
- * @LastEditTime: 2025-06-19 19:50:54
- * @LastEditors: 星年 && j_xingnian@163.com
+ * @LastEditTime: 2025-06-20 15:10:16
+ * @LastEditors: 星年
  * @Description: 
  * @FilePath: \coze_ws_app_weixue\components\ui\ui_events.c
  * 遇事不决，可问春风
@@ -24,24 +24,6 @@ static const char *TAG = "ui_events";
 #define MAX_CHAT_LINES 30  // 最大消息行数限制
 #define MAX_SUBTITLE_LEN 4096  // 字幕最大长度
 
-/* 电池电量低 */
-#define BATTERY_LOW "1"
-/* 电池电量中 */
-#define BATTERY_MID "2"
-/* 电池电量高 */
-#define BATTERY_HIGH "3"
-/* 网络WIFI */
-#define NETWORK_WIFI "4"
-/* 网络有线 */
-#define NETWORK_CABLE "5"
-/* 网络4G */
-#define NETWORK_4G "6"
-/* 音频播放 */
-#define STATUS_PLAY "7"
-/* 音频待机 */
-#define STATUS_WAIT "8" 
-/* 音频MIC */
-#define STATUS_MIC "9"
 
 lv_obj_t * ui_chat;
 lv_obj_t * chat_messages[MAX_CHAT_LINES] = {NULL};  // 存储消息对象的数组
@@ -230,8 +212,8 @@ void ui_events_init(void){
         lv_label_set_text(ui_Time, "13:14");
 
         lv_label_set_text(ui_status, STATUS_WAIT);
-        lv_label_set_text(ui_network, NETWORK_WIFI);
-        lv_label_set_text(ui_battery, BATTERY_LOW);
+        lv_label_set_text(ui_network, STATUS_WAIT);
+        lv_label_set_text(ui_battery, BATTERY_HIGH);
         
         // 设置Panel1为可滚动
         lv_obj_add_flag(ui_Panel1, LV_OBJ_FLAG_SCROLLABLE);
@@ -255,4 +237,28 @@ void ui_events_init(void){
     // 创建定时任务，每500ms执行一次
     xTaskCreate(ui_events_timer_task, "ui_events_timer_task", 2048, NULL, 5, NULL);
     
+}
+
+// 设置音频状态标签的函数
+void set_status_label(const char *status) {
+    if (example_lvgl_lock(-1)) {
+        lv_label_set_text(ui_status, status);
+        example_lvgl_unlock();
+    }
+}
+
+// 设置网络标签的函数
+void set_network_label(const char *network) {
+    if (example_lvgl_lock(-1)) {
+        lv_label_set_text(ui_network, network);
+        example_lvgl_unlock();
+    }
+}
+
+// 设置电池标签的函数
+void set_battery_label(const char *battery) {
+    if (example_lvgl_lock(-1)) {
+        lv_label_set_text(ui_battery, battery);
+        example_lvgl_unlock();
+    }
 }

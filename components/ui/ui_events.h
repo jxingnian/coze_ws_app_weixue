@@ -9,6 +9,25 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
+/* 电池电量低 */
+#define BATTERY_LOW "1"
+/* 电池电量中 */
+#define BATTERY_MID "2"
+/* 电池电量高 */
+#define BATTERY_HIGH "3"
+/* 网络WIFI */
+#define NETWORK_WIFI "4"
+/* 网络有线 */
+#define NETWORK_CABLE "5"
+/* 网络4G */
+#define NETWORK_4G "6"
+/* 音频播放 */
+#define STATUS_PLAY "7"
+/* 音频待机 */
+#define STATUS_WAIT "8" 
+/* 音频MIC */
+#define STATUS_MIC "9"
+
 extern SemaphoreHandle_t lvgl_mux;  // LVGL互斥锁
 
 void ui_events_init(void);
@@ -17,6 +36,14 @@ void add_subtitle(char *text);
 bool example_lvgl_lock(int timeout_ms);
 void example_lvgl_unlock(void);
 void show_and_clear_subtitle(void);
+
+// 设置音频状态标签的函数
+void set_status_label(const char *status);
+// 设置网络标签的函数
+void set_network_label(const char *network);
+// 设置电池标签的函数
+void set_battery_label(const char *battery);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
