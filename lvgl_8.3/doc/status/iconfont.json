@@ -1,0 +1,72 @@
+{
+  "id": "4946252",
+  "name": "lvgl",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "22323402",
+      "name": "正在连接-8",
+      "font_class": "zhengzailianjie",
+      "unicode": "38",
+      "unicode_decimal": 56
+    },
+    {
+      "icon_id": "319635",
+      "name": "volume-7",
+      "font_class": "volume",
+      "unicode": "37",
+      "unicode_decimal": 55
+    },
+    {
+      "icon_id": "40394737",
+      "name": "音频-状态-9",
+      "font_class": "yinpin-zhuangtai",
+      "unicode": "39",
+      "unicode_decimal": 57
+    },
+    {
+      "icon_id": "59492",
+      "name": "wifi-4",
+      "font_class": "wifi",
+      "unicode": "34",
+      "unicode_decimal": 52
+    },
+    {
+      "icon_id": "1305089",
+      "name": "网络接口-5",
+      "font_class": "wangluojiekou",
+      "unicode": "35",
+      "unicode_decimal": 53
+    },
+    {
+      "icon_id": "18724158",
+      "name": "Lte4G-6",
+      "font_class": "Lte4G",
+      "unicode": "36",
+      "unicode_decimal": 54
+    },
+    {
+      "icon_id": "781547",
+      "name": "battery01",
+      "font_class": "dianliang01",
+      "unicode": "31",
+      "unicode_decimal": 49
+    },
+    {
+      "icon_id": "781549",
+      "name": "battery02",
+      "font_class": "dianliang101",
+      "unicode": "32",
+      "unicode_decimal": 50
+    },
+    {
+      "icon_id": "781551",
+      "name": "battery03",
+      "font_class": "dianliang201",
+      "unicode": "33",
+      "unicode_decimal": 51
+    }
+  ]
+}

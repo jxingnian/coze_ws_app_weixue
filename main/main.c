@@ -2,7 +2,7 @@
  * @Author: xingnian j_xingnian@163.com
  * @Date: 2025-06-14 19:45:31
  * @LastEditors: 星年
- * @LastEditTime: 2025-06-19 17:37:49
+ * @LastEditTime: 2025-06-20 14:22:53
  * @FilePath: \coze_ws_app_weixue\main\main.c
  * @Description: 
  * 
@@ -372,8 +372,10 @@ void app_main(void)
 
     spiffs_filesystem_init();
 
-    // esp_log_level_set("lcd_panel.io.i2c", ESP_LOG_NONE);
-    // esp_log_level_set("FT5x06", ESP_LOG_NONE);
+    esp_log_level_set("lcd_panel.io.i2c", ESP_LOG_NONE);
+    esp_log_level_set("FT5x06", ESP_LOG_NONE);
+    // esp_log_level_set("i2c.master", ESP_LOG_NONE);
+    
     static lv_disp_draw_buf_t disp_buf; // 包含内部图形缓冲区，称为绘制缓冲区
     static lv_disp_drv_t disp_drv;      // 包含回调函数
 

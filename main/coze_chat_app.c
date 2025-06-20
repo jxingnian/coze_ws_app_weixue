@@ -52,7 +52,6 @@ static void audio_event_callback(esp_coze_chat_event_t event, char *data, void *
         ESP_LOGI(TAG, "Customer data: %s", data);
     } else if (event == ESP_COZE_CHAT_EVENT_CHAT_SUBTITLE_EVENT) {
         ESP_LOGI(TAG, "Subtitle data: %s", data);
-        // 使用字幕缓存函数处理字幕
         add_subtitle(data);
     }else if(event == ESP_COZE_CHAT_EVENT_CHAT_COMPLETED){
     }

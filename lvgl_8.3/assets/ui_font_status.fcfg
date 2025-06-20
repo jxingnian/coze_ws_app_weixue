@@ -1,18 +1,16 @@
 {
   "codename": "status",
-  "ttf_path": "/assets/status.ttf",
+  "ttf_path": "/assets/iconfont.ttf",
   "bin_path": "/assets\\ui_font_status.bin",
   "c_path": "/assets\\ui_font_status.c",
   "cfg_path": "/assets\\ui_font_status.fcfg",
-  "size": 32,
+  "size": 24,
   "bpp": 1,
-  "letters": 5,
+  "letters": 0,
   "ranges": [
-    "0x37",
-    "0x38",
-    "0x39"
+    "0x20-0x7f"
   ],
-  "symbols": "789",
+  "symbols": "0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39",
   "customparams": "--no-compress --no-prefilter",
   "uploaded": false
 }

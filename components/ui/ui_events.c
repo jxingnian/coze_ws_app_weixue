@@ -105,23 +105,6 @@ void add_subtitle(char *text) {
     if(subtitle_flag == 0){
         subtitle_flag = 1;
     }
-    // // 检查常见的标点符号以确定是否接收到完整的句子
-    // char *end_of_sentence = strpbrk(subtitle_buffer, "，。？,.?;；:：、");
-
-    // while (end_of_sentence != NULL) {
-    //     // 在标点符号处终止句子
-    //     *(end_of_sentence + 1) = '\0';
-
-    //     // 显示完整的句子
-    //     show_text(subtitle_buffer);
-
-    //     // 将剩余文本移到缓冲区的开头
-    //     subtitle_len = strlen(end_of_sentence + 1);
-    //     memmove(subtitle_buffer, end_of_sentence + 1, subtitle_len + 1);
-
-    //     // 检查剩余缓冲区中是否有另一个完整的句子
-    //     end_of_sentence = strpbrk(subtitle_buffer, "，。？,.?;；:：、");
-    // }
 }
 
 /**
