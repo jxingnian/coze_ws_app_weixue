@@ -18,9 +18,9 @@ extern "C" {
 #include "ui_events.h"
 
 
-// SCREEN: ui_Main
-void ui_Main_screen_init(void);
-extern lv_obj_t * ui_Main;
+// SCREEN: ui_Main1
+void ui_Main1_screen_init(void);
+extern lv_obj_t * ui_Main1;
 extern lv_obj_t * ui_PanelStatus;
 extern lv_obj_t * ui_MainName;
 extern lv_obj_t * ui_battery;
@@ -35,12 +35,9 @@ extern lv_obj_t * ui_Panel1;
 extern lv_obj_t * ui____initial_actions0;
 
 // FONTS
-LV_FONT_DECLARE(ui_font_battery);
 LV_FONT_DECLARE(ui_font_dinglie16);
-LV_FONT_DECLARE(ui_font_headPortrait);
-LV_FONT_DECLARE(ui_font_network);
-LV_FONT_DECLARE(ui_font_status);
 LV_FONT_DECLARE(ui_font_dinglie32);
+LV_FONT_DECLARE(ui_font_status);
 
 // UI INIT
 void ui_init(void);
