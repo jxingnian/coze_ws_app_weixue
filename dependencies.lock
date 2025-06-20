@@ -257,6 +257,12 @@ dependencies:
       registry_url: https://components.espressif.com/
       type: service
     version: 8.3.11
+  protocol_examples_common:
+    dependencies: []
+    source:
+      path: C:\Espressif5.3\frameworks\esp-idf-v5.3\examples\common_components\protocol_examples_common
+      type: local
+    version: '*'
 direct_dependencies:
 - espressif/button
 - espressif/esp_audio_simple_player
@@ -273,6 +279,7 @@ direct_dependencies:
 - espressif/gmf_misc
 - idf
 - lvgl/lvgl
-manifest_hash: 77e6a7a17e3ca19a494da8f32772d2e040e91cda9eadd3cf5a8f46d87e72bf1b
+- protocol_examples_common
+manifest_hash: 60d20fbf9f148fc0a7097de240e5343f6506c6b46f74c7008f2693ff7691b1e4
 target: esp32s3
 version: 2.0.0
