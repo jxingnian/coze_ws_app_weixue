@@ -1,0 +1,17 @@
+{
+  "codename": "headPortrait",
+  "ttf_path": "/assets/head_portrait.ttf",
+  "bin_path": "/assets\\ui_font_headPortrait.bin",
+  "c_path": "/assets\\ui_font_headPortrait.c",
+  "cfg_path": "/assets\\ui_font_headPortrait.fcfg",
+  "size": 40,
+  "bpp": 1,
+  "letters": 0,
+  "ranges": [
+    "0x61",
+    "  0x62"
+  ],
+  "symbols": "ab",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}

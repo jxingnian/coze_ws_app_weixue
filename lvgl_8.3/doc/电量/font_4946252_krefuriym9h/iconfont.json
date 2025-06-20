@@ -1,0 +1,30 @@
+{
+  "id": "4946252",
+  "name": "lvgl",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "781547",
+      "name": "battery01",
+      "font_class": "dianliang01",
+      "unicode": "31",
+      "unicode_decimal": 49
+    },
+    {
+      "icon_id": "781549",
+      "name": "battery02",
+      "font_class": "dianliang101",
+      "unicode": "32",
+      "unicode_decimal": 50
+    },
+    {
+      "icon_id": "781551",
+      "name": "battery03",
+      "font_class": "dianliang201",
+      "unicode": "33",
+      "unicode_decimal": 51
+    }
+  ]
+}
