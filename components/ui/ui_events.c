@@ -1,7 +1,7 @@
 /*
  * @Author: jixingnian@gmail.com
  * @Date: 2025-06-12 15:42:08
- * @LastEditTime: 2025-06-20 15:10:16
+ * @LastEditTime: 2025-06-20 16:04:30
  * @LastEditors: 星年
  * @Description: 
  * @FilePath: \coze_ws_app_weixue\components\ui\ui_events.c
@@ -46,6 +46,7 @@ SemaphoreHandle_t lvgl_mux = NULL;  // LVGL互斥锁
  bool example_lvgl_lock(int timeout_ms)
 {
     assert(lvgl_mux && "bsp_display_start must be called first");
+    // ESP_LOGI(TAG, "example_lvgl_lock");
 
     const TickType_t timeout_ticks = (timeout_ms == -1) ? portMAX_DELAY : pdMS_TO_TICKS(timeout_ms);
     return xSemaphoreTake(lvgl_mux, timeout_ticks) == pdTRUE;
@@ -57,6 +58,7 @@ SemaphoreHandle_t lvgl_mux = NULL;  // LVGL互斥锁
  */
  void example_lvgl_unlock(void)
 {
+    // ESP_LOGI(TAG, "example_lvgl_unlock");
     assert(lvgl_mux && "bsp_display_start must be called first");
     xSemaphoreGive(lvgl_mux);
 }
@@ -67,7 +69,7 @@ static uint8_t subtitle_count = 0;
 static void ui_events_timer_task(void *pvParameters)
 {
     while (1) {
-        vTaskDelay(pdMS_TO_TICKS(200));
+        vTaskDelay(pdMS_TO_TICKS(500));
         if(subtitle_flag == 1){
             vTaskDelay(pdMS_TO_TICKS(1000));
             show_and_clear_subtitle();
@@ -238,7 +240,6 @@ void ui_events_init(void){
     xTaskCreate(ui_events_timer_task, "ui_events_timer_task", 2048, NULL, 5, NULL);
     
 }
-
 // 设置音频状态标签的函数
 void set_status_label(const char *status) {
     if (example_lvgl_lock(-1)) {

@@ -49,6 +49,7 @@ static void audio_event_callback(esp_coze_chat_event_t event, char *data, void *
         ESP_LOGI(TAG, "chat stop");
     } else if (event == ESP_COZE_CHAT_EVENT_CHAT_CUSTOMER_DATA) {
         // cjson format data
+        set_status_label(STATUS_PLAY);
         ESP_LOGI(TAG, "Customer data: %s", data);
     } else if (event == ESP_COZE_CHAT_EVENT_CHAT_SUBTITLE_EVENT) {
         ESP_LOGI(TAG, "Subtitle data: %s", data);
@@ -136,10 +137,12 @@ static void btn_event_task(void *pv)
                 case BUTTON_PRESS_DOWN:
                     esp_coze_chat_send_audio_cancel(coze_chat.chat);
                     xEventGroupSetBits(coze_chat.data_evt_group, BUTTON_REC_READING);
+                    set_status_label(STATUS_MIC);   
                     break;
                 case BUTTON_PRESS_UP:
                     xEventGroupClearBits(coze_chat.data_evt_group, BUTTON_REC_READING);
                     esp_coze_chat_send_audio_complete(coze_chat.chat);
+                    set_status_label(STATUS_WAIT);   
                     break;
                 default:
                     break;
