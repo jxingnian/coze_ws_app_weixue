@@ -35,7 +35,6 @@ Thumbs.db
 *.debug
 
 # Binary files
-*.bin
 *.elf
 *.map
 
