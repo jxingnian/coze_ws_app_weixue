@@ -1,8 +1,8 @@
 /*
  * @Author: xingnian j_xingnian@163.com
  * @Date: 2025-06-14 19:45:31
- * @LastEditors: 星年
- * @LastEditTime: 2025-06-20 15:18:52
+ * @LastEditors: 星年 && j_xingnian@163.com
+ * @LastEditTime: 2025-07-13 18:39:38
  * @FilePath: \coze_ws_app_weixue\main\main.c
  * @Description: 
  * 
@@ -47,6 +47,9 @@
 #include "ui.h"                 // 用户界面
 
 #include "esp_wifi.h"  // Add this include for WiFi functions
+#include <string.h>
+#include "wifi_manager.h"
+#include "http_server.h"
 
 static const char *TAG = "COZE_CHAT_WS";
 
@@ -531,11 +534,19 @@ ESP_ERROR_CHECK(esp_lcd_new_panel_io_i2c(i2c_bus_handle, &tp_io_config, &tp_io_h
     xTaskCreate(example_lvgl_port_task, "LVGL", EXAMPLE_LVGL_TASK_STACK_SIZE, NULL, EXAMPLE_LVGL_TASK_PRIORITY, NULL);
   
     
-    ESP_ERROR_CHECK(esp_netif_init());
-    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    // ESP_ERROR_CHECK(esp_netif_init());
+    // ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    ESP_ERROR_CHECK(example_connect());
+    // ESP_ERROR_CHECK(example_connect());
 
+    // 初始化并启动WiFi AP
+    ESP_LOGI(TAG, "Starting WiFi in AP mode");
+    ESP_ERROR_CHECK(wifi_init_softap());
+
+    // 启动HTTP服务器
+    ESP_ERROR_CHECK(start_webserver());
+    ESP_LOGI(TAG, "System initialized successfully");
+    
     coze_chat_app_init();
 
     esp_log_level_set("lcd_panel.io.i2c", ESP_LOG_NONE);
