@@ -75,12 +75,6 @@
                 "InheritedType": 1
               },
               {
-                "nid": 225,
-                "flags": 1048576,
-                "strtype": "OBJECT/Scrolling",
-                "InheritedType": 1
-              },
-              {
                 "nid": 230,
                 "strtype": "OBJECT/Scrollable",
                 "strval": "False",
@@ -96,18 +90,6 @@
                 "nid": 310,
                 "strtype": "OBJECT/Scroll_direction",
                 "strval": "ALL",
-                "InheritedType": 3
-              },
-              {
-                "nid": 314,
-                "strtype": "OBJECT/Scroll_snap_x",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 315,
-                "strtype": "OBJECT/Scroll_snap_y",
-                "strval": "NONE",
                 "InheritedType": 3
               },
               {
@@ -208,12 +190,6 @@
                 "InheritedType": 2
               },
               {
-                "nid": 225,
-                "flags": 1048576,
-                "strtype": "OBJECT/Scrolling",
-                "InheritedType": 1
-              },
-              {
                 "nid": 300,
                 "strtype": "OBJECT/Scrollbar_mode",
                 "strval": "AUTO",
@@ -223,18 +199,6 @@
                 "nid": 310,
                 "strtype": "OBJECT/Scroll_direction",
                 "strval": "ALL",
-                "InheritedType": 3
-              },
-              {
-                "nid": 314,
-                "strtype": "OBJECT/Scroll_snap_x",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 315,
-                "strtype": "OBJECT/Scroll_snap_y",
-                "strval": "NONE",
                 "InheritedType": 3
               },
               {
@@ -367,12 +331,6 @@
                 "InheritedType": 2
               },
               {
-                "nid": 225,
-                "flags": 1048576,
-                "strtype": "OBJECT/Scrolling",
-                "InheritedType": 1
-              },
-              {
                 "nid": 300,
                 "strtype": "OBJECT/Scrollbar_mode",
                 "strval": "AUTO",
@@ -382,18 +340,6 @@
                 "nid": 310,
                 "strtype": "OBJECT/Scroll_direction",
                 "strval": "ALL",
-                "InheritedType": 3
-              },
-              {
-                "nid": 314,
-                "strtype": "OBJECT/Scroll_snap_x",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 315,
-                "strtype": "OBJECT/Scroll_snap_y",
-                "strval": "NONE",
                 "InheritedType": 3
               },
               {
@@ -525,12 +471,6 @@
                 "InheritedType": 2
               },
               {
-                "nid": 225,
-                "flags": 1048576,
-                "strtype": "OBJECT/Scrolling",
-                "InheritedType": 1
-              },
-              {
                 "nid": 300,
                 "strtype": "OBJECT/Scrollbar_mode",
                 "strval": "AUTO",
@@ -540,18 +480,6 @@
                 "nid": 310,
                 "strtype": "OBJECT/Scroll_direction",
                 "strval": "ALL",
-                "InheritedType": 3
-              },
-              {
-                "nid": 314,
-                "strtype": "OBJECT/Scroll_snap_x",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 315,
-                "strtype": "OBJECT/Scroll_snap_y",
-                "strval": "NONE",
                 "InheritedType": 3
               },
               {
@@ -683,12 +611,6 @@
                 "InheritedType": 2
               },
               {
-                "nid": 225,
-                "flags": 1048576,
-                "strtype": "OBJECT/Scrolling",
-                "InheritedType": 1
-              },
-              {
                 "nid": 300,
                 "strtype": "OBJECT/Scrollbar_mode",
                 "strval": "AUTO",
@@ -698,18 +620,6 @@
                 "nid": 310,
                 "strtype": "OBJECT/Scroll_direction",
                 "strval": "ALL",
-                "InheritedType": 3
-              },
-              {
-                "nid": 314,
-                "strtype": "OBJECT/Scroll_snap_x",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 315,
-                "strtype": "OBJECT/Scroll_snap_y",
-                "strval": "NONE",
                 "InheritedType": 3
               },
               {
@@ -750,8 +660,7 @@
                 "InheritedType": 11
               }
             ],
-            "saved_objtypeKey": "LABEL",
-            "tree_closed": true
+            "saved_objtypeKey": "LABEL"
           },
           {
             "guid": "GUID12716463-446700S4654171",
@@ -827,12 +736,6 @@
                 "InheritedType": 2
               },
               {
-                "nid": 225,
-                "flags": 1048576,
-                "strtype": "OBJECT/Scrolling",
-                "InheritedType": 1
-              },
-              {
                 "nid": 300,
                 "strtype": "OBJECT/Scrollbar_mode",
                 "strval": "AUTO",
@@ -842,18 +745,6 @@
                 "nid": 310,
                 "strtype": "OBJECT/Scroll_direction",
                 "strval": "ALL",
-                "InheritedType": 3
-              },
-              {
-                "nid": 314,
-                "strtype": "OBJECT/Scroll_snap_x",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 315,
-                "strtype": "OBJECT/Scroll_snap_y",
-                "strval": "NONE",
                 "InheritedType": 3
               },
               {
@@ -984,12 +875,6 @@
                 "InheritedType": 2
               },
               {
-                "nid": 225,
-                "flags": 1048576,
-                "strtype": "OBJECT/Scrolling",
-                "InheritedType": 1
-              },
-              {
                 "nid": 300,
                 "strtype": "OBJECT/Scrollbar_mode",
                 "strval": "AUTO",
@@ -999,18 +884,6 @@
                 "nid": 310,
                 "strtype": "OBJECT/Scroll_direction",
                 "strval": "ALL",
-                "InheritedType": 3
-              },
-              {
-                "nid": 314,
-                "strtype": "OBJECT/Scroll_snap_x",
-                "strval": "NONE",
-                "InheritedType": 3
-              },
-              {
-                "nid": 315,
-                "strtype": "OBJECT/Scroll_snap_y",
-                "strval": "NONE",
                 "InheritedType": 3
               },
               {
@@ -1039,7 +912,7 @@
           }
         ],
         "isPage": true,
-        "editor_posx": 460,
+        "editor_posx": 920,
         "editor_posy": -460,
         "dont_export": false,
         "locked": false,
@@ -1080,12 +953,6 @@
             "InheritedType": 1
           },
           {
-            "nid": 225,
-            "flags": 1048576,
-            "strtype": "OBJECT/Scrolling",
-            "InheritedType": 1
-          },
-          {
             "nid": 230,
             "strtype": "OBJECT/Scrollable",
             "strval": "False",
@@ -1101,18 +968,6 @@
             "nid": 310,
             "strtype": "OBJECT/Scroll_direction",
             "strval": "ALL",
-            "InheritedType": 3
-          },
-          {
-            "nid": 314,
-            "strtype": "OBJECT/Scroll_snap_x",
-            "strval": "NONE",
-            "InheritedType": 3
-          },
-          {
-            "nid": 315,
-            "strtype": "OBJECT/Scroll_snap_y",
-            "strval": "NONE",
             "InheritedType": 3
           },
           {
@@ -1199,7 +1054,7 @@
     "description": "",
     "board": "Eclipse with SDL for development on PC",
     "board_version": "v1.0.3",
-    "editor_version": "1.5.3",
+    "editor_version": "1.5.0",
     "image": "",
     "export_temp_image": false,
     "force_export_images": false,
@@ -1210,12 +1065,11 @@
     "theme_dark": false,
     "theme_color1": 5,
     "theme_color2": 0,
-    "uiExportFolderPath": "C:\\Users\\Administrator\\Desktop\\XingNian\\esp32_project\\chunfeng\\coze_ws_app_weixue\\lvgl_8.3\\out",
-    "projectExportFolderPath": "C:\\Users\\Administrator\\Desktop\\XingNian\\esp32_project\\chunfeng\\coze_ws_app_weixue\\lvgl_8.3",
+    "uiExportFolderPath": "C:\\XingNian\\ESP32\\ChunFeng\\coze_ws_app_weixue\\lvgl_8.3\\out",
+    "projectExportFolderPath": "C:\\XingNian\\ESP32\\ChunFeng\\coze_ws_app_weixue\\lvgl_8.3",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 30,
+    "backup_cnt": 21,
     "autosave_cnt": 0,
-    "group_color_cnt": 0,
     "lvgl_version": "8.3.11",
     "callfuncsexport": "C_FILE",
     "imageexport": "SOURCE",
@@ -1230,7 +1084,6 @@
     "drive_fatfs_path": "",
     "naming": "Name",
     "naming_force_lowercase": false,
-    "naming_add_subcomponent": false,
     "nidcnt": 1000206,
     "BitDepth": 16,
     "Name": "SquareLine_Project"
